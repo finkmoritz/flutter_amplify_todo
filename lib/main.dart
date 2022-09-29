@@ -1,3 +1,4 @@
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_amplify_todo/page/todo_list_page.dart';
@@ -24,7 +25,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _configureAmplify() async {
-    await Amplify.addPlugins([]);
+    await Amplify.addPlugins([
+      AmplifyAuthCognito(),
+    ]);
 
     try {
       await Amplify.configure(amplifyconfig);

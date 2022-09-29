@@ -10,6 +10,11 @@
       "StackName": "amplify-flutteramplifytodo-dev-213843",
       "StackId": "arn:aws:cloudformation:eu-central-1:316381616744:stack/amplify-flutteramplifytodo-dev-213843/549d9480-402e-11ed-8528-06a6b7ed81d2",
       "AmplifyAppId": "d2zi0q2gm7yrl8"
+    },
+    "categories": {
+      "auth": {
+        "flutteramplifytodo6410f4ce": {}
+      }
     }
   }
 }
