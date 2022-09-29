@@ -1,16 +1,22 @@
-# flutter_amplify_todo
+# Flutter Amplify ToDo Demo App
 
-A new Flutter project.
+This demo project demonstrates the use of AWS Amplify to create a serverless ToDo app with Flutter.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+Install following tools:
+- [git](https://git-scm.com/)
+- [Flutter](https://flutter.dev/docs/get-started/install)
+- [Node.js](https://nodejs.org/)
+- [npm](https://www.npmjs.com/get-npm)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Create an [AWS account](https://portal.aws.amazon.com/billing/signup?redirect_url=https%3A%2F%2Faws.amazon.com%2Fregistration-confirmation#/start)
+(in case you do not already have one)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Configure Amplify CLI
+
+- Install CLI via ```npm install -g @aws-amplify/cli```
+- Configure CLI with your AWS profile via ```amplify configure```
+- Initialize Amplify in this project via ```amplify init``` (use the AWS profile configured in the previous step)
