@@ -38,3 +38,22 @@ Execute ```amplify add auth``` with following configuration:
 ````
 
 Push your changes using ```amplify push```.
+
+### Configure Amplify DataStore
+
+Execute ```amplify add api``` with following configuration:
+````
+Select from one of the below mentioned services: 
+GraphQL
+
+Here is the GraphQL API that we will create. Select a setting to edit or continue (Use arrow keys)
+Name: flutteramplifytodo 
+Authorization modes: API key (default, expiration time: 365 days from now) 
+Conflict detection (required for DataStore): Enabled 
+Conflict resolution strategy: Auto Merge 
+
+Choose a schema template: 
+Single object with fields (e.g., “Todo” with ID, name, description)
+````
+
+Push your changes using ```amplify push```.

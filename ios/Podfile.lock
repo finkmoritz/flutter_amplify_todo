@@ -12,6 +12,11 @@ PODS:
     - Flutter
     - SwiftFormat/CLI
     - SwiftLint (= 0.48.0)
+  - amplify_datastore (0.0.1):
+    - Amplify (= 1.28.0)
+    - amplify_core
+    - AmplifyPlugins/AWSDataStorePlugin (= 1.28.0)
+    - Flutter
   - amplify_flutter_ios (0.0.1):
     - Amplify (= 1.28.0)
     - amplify_core
@@ -27,6 +32,10 @@ PODS:
     - AWSCore (~> 2.27.0)
     - AWSMobileClient (~> 2.27.0)
     - AWSPluginsCore (= 1.28.0)
+  - AmplifyPlugins/AWSDataStorePlugin (1.28.0):
+    - AWSCore (~> 2.27.0)
+    - AWSPluginsCore (= 1.28.0)
+    - SQLite.swift (= 0.13.2)
   - AWSAuthCore (2.27.15):
     - AWSCore (= 2.27.15)
   - AWSCognitoIdentityProvider (2.27.15):
@@ -45,12 +54,16 @@ PODS:
     - AWSCore (~> 2.27.0)
   - Flutter (1.0.0)
   - ObjectMapper (4.2.0)
+  - SQLite.swift (0.13.2):
+    - SQLite.swift/standard (= 0.13.2)
+  - SQLite.swift/standard (0.13.2)
   - SwiftFormat/CLI (0.49.18)
   - SwiftLint (0.48.0)
 
 DEPENDENCIES:
   - amplify_auth_cognito_ios (from `.symlinks/plugins/amplify_auth_cognito_ios/ios`)
   - amplify_core (from `.symlinks/plugins/amplify_core/ios`)
+  - amplify_datastore (from `.symlinks/plugins/amplify_datastore/ios`)
   - amplify_flutter_ios (from `.symlinks/plugins/amplify_flutter_ios/ios`)
   - Flutter (from `Flutter`)
 
@@ -65,6 +78,7 @@ SPEC REPOS:
     - AWSMobileClient
     - AWSPluginsCore
     - ObjectMapper
+    - SQLite.swift
     - SwiftFormat
     - SwiftLint
 
@@ -73,6 +87,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/amplify_auth_cognito_ios/ios"
   amplify_core:
     :path: ".symlinks/plugins/amplify_core/ios"
+  amplify_datastore:
+    :path: ".symlinks/plugins/amplify_datastore/ios"
   amplify_flutter_ios:
     :path: ".symlinks/plugins/amplify_flutter_ios/ios"
   Flutter:
@@ -82,6 +98,7 @@ SPEC CHECKSUMS:
   Amplify: dfa12fad1609b1388d0b2fb6f99b3140cd942d09
   amplify_auth_cognito_ios: a2a37adcedf38b8b3e5a2b564ff0432d875654ad
   amplify_core: 0876b2fbbcec7619f5b58b20c59ecc0118f65a47
+  amplify_datastore: b996b3713c22fe7cdd4cb7ece47ac2346418e7a0
   amplify_flutter_ios: 268040e5c74a116ee8d532c33ac5b4b405692b1a
   AmplifyPlugins: 1bac66d0349fa307008f6f7711b09d0f80e78c30
   AWSAuthCore: 0bac0e67c28d620c8f823c88bd15d552544e801a
@@ -92,6 +109,7 @@ SPEC CHECKSUMS:
   AWSPluginsCore: 7f0f984d787a4fe79d3d52c3d34e1779d1fc9bb8
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   ObjectMapper: 1eb41f610210777375fa806bf161dc39fb832b81
+  SQLite.swift: 4fc2be46c36392e3b87afe6fe7f1801c1daa07ef
   SwiftFormat: 2402d29b26746f169cce5454d5af88314cbb2e35
   SwiftLint: 284cea64b6187c5d6bd83e9a548a64104d546447
 
