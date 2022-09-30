@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
@@ -18,11 +20,18 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  StreamSubscription<HubEvent>? hubSubscription;
 
   @override
   initState() {
     super.initState();
     _configureAmplify();
+  }
+
+  @override
+  void dispose() {
+    hubSubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _configureAmplify() async {
@@ -32,10 +41,30 @@ class _MyAppState extends State<MyApp> {
 
     try {
       await Amplify.configure(amplifyconfig);
+      _subscribe();
     } on AmplifyAlreadyConfiguredException {
       safePrint(
           "Tried to reconfigure Amplify; this can occur when your app restarts on Android.");
     }
+  }
+
+  Future<void> _subscribe() async {
+    hubSubscription = Amplify.Hub.listen([HubChannel.Auth], (event) {
+      switch (event.eventName) {
+        case 'SIGNED_IN':
+          safePrint('Successfully signed in');
+          break;
+        case 'SIGNED_OUT':
+          safePrint('Successfully signed out');
+          break;
+        case 'SESSION_EXPIRED':
+          safePrint('Session expired');
+          break;
+        case 'USER_DELETED':
+          safePrint('Successfully deleted user account');
+          break;
+      }
+    });
   }
 
   @override
