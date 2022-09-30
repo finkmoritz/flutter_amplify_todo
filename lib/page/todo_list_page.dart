@@ -5,6 +5,7 @@ import 'package:flutter_amplify_todo/page/password_change_page.dart';
 enum MenuOptions {
   changePassword,
   signOut,
+  deleteAccount,
 }
 
 class ToDoListPage extends StatefulWidget {
@@ -15,7 +16,6 @@ class ToDoListPage extends StatefulWidget {
 }
 
 class _ToDoListPageState extends State<ToDoListPage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,14 +33,26 @@ class _ToDoListPageState extends State<ToDoListPage> {
                 value: MenuOptions.signOut,
                 child: Text('Sign Out'),
               ),
+              const PopupMenuItem(
+                value: MenuOptions.deleteAccount,
+                child: Text(
+                  'Delete Account',
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+              ),
             ],
             onSelected: (value) {
-              switch(value) {
+              switch (value) {
                 case MenuOptions.changePassword:
                   _changePassword();
                   break;
                 case MenuOptions.signOut:
                   _signOut();
+                  break;
+                case MenuOptions.deleteAccount:
+                  _deleteAccount();
                   break;
                 default:
                   throw Exception('Unknown MenuOption $value');
@@ -66,6 +78,16 @@ class _ToDoListPageState extends State<ToDoListPage> {
   _signOut() async {
     try {
       await Amplify.Auth.signOut();
+    } on AuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.message),
+      ));
+    }
+  }
+
+  _deleteAccount() async {
+    try {
+      await Amplify.Auth.deleteUser();
     } on AuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(e.message),
