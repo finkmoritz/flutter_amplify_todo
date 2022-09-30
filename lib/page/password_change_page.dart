@@ -87,7 +87,6 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
           newPassword: _newPasswordController.text.trim(),
         ).then((_) => Navigator.pop(context));
       } on AmplifyException catch (e) {
-        safePrint(e.message);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(e.message),
         ));

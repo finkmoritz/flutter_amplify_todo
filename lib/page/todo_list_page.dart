@@ -1,8 +1,10 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_amplify_todo/page/edit_profile_page.dart';
 import 'package:flutter_amplify_todo/page/password_change_page.dart';
 
 enum MenuOptions {
+  editProfile,
   changePassword,
   signOut,
   deleteAccount,
@@ -26,6 +28,10 @@ class _ToDoListPageState extends State<ToDoListPage> {
             icon: const Icon(Icons.person),
             itemBuilder: (context) => [
               const PopupMenuItem(
+                value: MenuOptions.editProfile,
+                child: Text('Edit Profile'),
+              ),
+              const PopupMenuItem(
                 value: MenuOptions.changePassword,
                 child: Text('Change Password'),
               ),
@@ -45,6 +51,9 @@ class _ToDoListPageState extends State<ToDoListPage> {
             ],
             onSelected: (value) {
               switch (value) {
+                case MenuOptions.editProfile:
+                  _editProfile();
+                  break;
                 case MenuOptions.changePassword:
                   _changePassword();
                   break;
@@ -63,6 +72,14 @@ class _ToDoListPageState extends State<ToDoListPage> {
       ),
       body: const Center(
         child: Text('Congratulations, there is nothing left to do!'),
+      ),
+    );
+  }
+
+  _editProfile() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const EditProfilePage(),
       ),
     );
   }
