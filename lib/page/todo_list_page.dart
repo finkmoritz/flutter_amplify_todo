@@ -20,6 +20,19 @@ class ToDoListPage extends StatefulWidget {
 }
 
 class _ToDoListPageState extends State<ToDoListPage> {
+  List<Todo> _todoList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTodoList();
+  }
+
+  Future<void> _loadTodoList() async {
+    _todoList = await Amplify.DataStore.query(Todo.classType);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,9 +85,20 @@ class _ToDoListPageState extends State<ToDoListPage> {
           ),
         ],
       ),
-      body: const Center(
-        child: Text('Congratulations, there is nothing left to do!'),
-      ),
+      body: _todoList.isEmpty
+          ? const Center(
+              child: Text('Congratulations, there is nothing left to do!'),
+            )
+          : ListView.builder(
+              itemCount: _todoList.length,
+              itemBuilder: (context, index) {
+                var todo = _todoList[index];
+                return ListTile(
+                  title: Text(todo.name),
+                  subtitle: Text(todo.description ?? ''),
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: _createToDo,
         child: const Icon(Icons.add),
@@ -118,13 +142,14 @@ class _ToDoListPageState extends State<ToDoListPage> {
     }
   }
 
-  _createToDo() {
-    Navigator.of(context).push(
+  _createToDo() async {
+    await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ToDoPage(
           todo: Todo(name: ''),
         ),
       ),
     );
+    _loadTodoList();
   }
 }
