@@ -1,6 +1,8 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_amplify_todo/models/ModelProvider.dart';
 import 'package:flutter_amplify_todo/page/edit_profile_page.dart';
+import 'package:flutter_amplify_todo/page/todo_page.dart';
 import 'package:flutter_amplify_todo/page/password_change_page.dart';
 
 enum MenuOptions {
@@ -73,6 +75,10 @@ class _ToDoListPageState extends State<ToDoListPage> {
       body: const Center(
         child: Text('Congratulations, there is nothing left to do!'),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _createToDo,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
@@ -110,5 +116,15 @@ class _ToDoListPageState extends State<ToDoListPage> {
         content: Text(e.message),
       ));
     }
+  }
+
+  _createToDo() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ToDoPage(
+          todo: Todo(name: ''),
+        ),
+      ),
+    );
   }
 }
