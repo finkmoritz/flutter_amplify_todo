@@ -2,6 +2,8 @@ import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_amplify_todo/models/Todo.dart';
 
+import '../models/Note.dart';
+
 class ToDoPage extends StatefulWidget {
   final Todo todo;
 
@@ -16,20 +18,33 @@ class ToDoPage extends StatefulWidget {
 
 class _ToDoPageState extends State<ToDoPage> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _nameTextController;
+  late TextEditingController _nameController;
   late TextEditingController _descriptionController;
+  late TextEditingController _noteController;
+  List<Note> _notes = [];
 
   @override
   void initState() {
     super.initState();
-    _nameTextController = TextEditingController(text: widget.todo.name);
-    _descriptionController = TextEditingController(text: widget.todo.description);
+    _nameController = TextEditingController(text: widget.todo.name);
+    _descriptionController =
+        TextEditingController(text: widget.todo.description);
+    _noteController = TextEditingController(text: '');
+
+    Amplify.DataStore.query(
+      Note.classType,
+      where: Note.TODO.eq(widget.todo.id),
+    ).then((notes) {
+      _notes = notes;
+      setState(() {});
+    });
   }
 
   @override
   void dispose() {
-    _nameTextController.dispose();
+    _nameController.dispose();
     _descriptionController.dispose();
+    _noteController.dispose();
     super.dispose();
   }
 
@@ -46,23 +61,44 @@ class _ToDoPageState extends State<ToDoPage> {
             key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextFormField(
-                  controller: _nameTextController,
-                  decoration: const InputDecoration(
-                    labelText: 'Name',
-                  ),
-                  validator: _validate,
-                ),
-                TextFormField(
-                  controller: _descriptionController,
-                  minLines: 5,
-                  maxLines: 5,
-                  decoration: const InputDecoration(
-                    labelText: 'Description',
-                  ),
-                ),
-              ],
+              children: <Widget>[
+                    TextFormField(
+                      controller: _nameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
+                      ),
+                      validator: _validate,
+                    ),
+                    TextFormField(
+                      controller: _descriptionController,
+                      minLines: 5,
+                      maxLines: 5,
+                      decoration: const InputDecoration(
+                        labelText: 'Description',
+                      ),
+                    ),
+                    const SizedBox(height: 64.0,),
+                    const Text(
+                      'Work Log',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ] +
+                  _notes
+                      .map((note) => Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text('${note.timestamp.substring(11, 16)} - ${note.text}'),
+                          ))
+                      .toList() +
+                  [
+                    TextFormField(
+                      controller: _noteController,
+                      decoration: const InputDecoration(
+                        labelText: 'Add Note',
+                      ),
+                    ),
+                  ],
             ),
           ),
         ),
@@ -84,10 +120,21 @@ class _ToDoPageState extends State<ToDoPage> {
   Future<void> _save() async {
     if (_formKey.currentState!.validate()) {
       try {
-        await Amplify.DataStore.save(widget.todo.copyWith(
-          name: _nameTextController.text.trim(),
+        Todo todo = widget.todo.copyWith(
+          name: _nameController.text.trim(),
           description: _descriptionController.text.trim(),
-        )).then((_) => Navigator.pop(context));
+        );
+        await Amplify.DataStore.save(todo).then((_) async {
+          if (_noteController.text.isNotEmpty) {
+            await Amplify.DataStore.save(Note(
+              todo: todo,
+              text: _noteController.text.trim(),
+              timestamp: DateTime.now().toIso8601String(),
+            )).then((_) => Navigator.pop(context));
+          } else {
+            Navigator.pop(context);
+          }
+        });
       } on DataStoreException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(e.message),

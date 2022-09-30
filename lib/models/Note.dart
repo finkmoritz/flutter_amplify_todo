@@ -21,19 +21,17 @@
 
 import 'ModelProvider.dart';
 import 'package:amplify_core/amplify_core.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 
-/** This is an auto generated class representing the Todo type in your schema. */
+/** This is an auto generated class representing the Note type in your schema. */
 @immutable
-class Todo extends Model {
-  static const classType = const _TodoModelType();
+class Note extends Model {
+  static const classType = const _NoteModelType();
   final String id;
-  final String? _name;
-  final String? _description;
-  final bool? _isDone;
-  final List<Note>? _notes;
+  final Todo? _todo;
+  final String? _text;
+  final String? _timestamp;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -45,9 +43,9 @@ class Todo extends Model {
     return id;
   }
   
-  String get name {
+  Todo get todo {
     try {
-      return _name!;
+      return _todo!;
     } catch(e) {
       throw new AmplifyCodeGenModelException(
           AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
@@ -58,13 +56,9 @@ class Todo extends Model {
     }
   }
   
-  String? get description {
-    return _description;
-  }
-  
-  bool get isDone {
+  String get text {
     try {
-      return _isDone!;
+      return _text!;
     } catch(e) {
       throw new AmplifyCodeGenModelException(
           AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
@@ -75,8 +69,17 @@ class Todo extends Model {
     }
   }
   
-  List<Note>? get notes {
-    return _notes;
+  String get timestamp {
+    try {
+      return _timestamp!;
+    } catch(e) {
+      throw new AmplifyCodeGenModelException(
+          AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
+          recoverySuggestion:
+            AmplifyExceptionMessages.codeGenRequiredFieldForceCastRecoverySuggestion,
+          underlyingException: e.toString()
+          );
+    }
   }
   
   TemporalDateTime? get createdAt {
@@ -87,15 +90,14 @@ class Todo extends Model {
     return _updatedAt;
   }
   
-  const Todo._internal({required this.id, required name, description, required isDone, notes, createdAt, updatedAt}): _name = name, _description = description, _isDone = isDone, _notes = notes, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Note._internal({required this.id, required todo, required text, required timestamp, createdAt, updatedAt}): _todo = todo, _text = text, _timestamp = timestamp, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Todo({String? id, required String name, String? description, required bool isDone, List<Note>? notes}) {
-    return Todo._internal(
+  factory Note({String? id, required Todo todo, required String text, required String timestamp}) {
+    return Note._internal(
       id: id == null ? UUID.getUUID() : id,
-      name: name,
-      description: description,
-      isDone: isDone,
-      notes: notes != null ? List<Note>.unmodifiable(notes) : notes);
+      todo: todo,
+      text: text,
+      timestamp: timestamp);
   }
   
   bool equals(Object other) {
@@ -105,12 +107,11 @@ class Todo extends Model {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is Todo &&
+    return other is Note &&
       id == other.id &&
-      _name == other._name &&
-      _description == other._description &&
-      _isDone == other._isDone &&
-      DeepCollectionEquality().equals(_notes, other._notes);
+      _todo == other._todo &&
+      _text == other._text &&
+      _timestamp == other._timestamp;
   }
   
   @override
@@ -120,11 +121,11 @@ class Todo extends Model {
   String toString() {
     var buffer = new StringBuffer();
     
-    buffer.write("Todo {");
+    buffer.write("Note {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("name=" + "$_name" + ", ");
-    buffer.write("description=" + "$_description" + ", ");
-    buffer.write("isDone=" + (_isDone != null ? _isDone!.toString() : "null") + ", ");
+    buffer.write("todo=" + (_todo != null ? _todo!.toString() : "null") + ", ");
+    buffer.write("text=" + "$_text" + ", ");
+    buffer.write("timestamp=" + "$_timestamp" + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -132,69 +133,61 @@ class Todo extends Model {
     return buffer.toString();
   }
   
-  Todo copyWith({String? id, String? name, String? description, bool? isDone, List<Note>? notes}) {
-    return Todo._internal(
+  Note copyWith({String? id, Todo? todo, String? text, String? timestamp}) {
+    return Note._internal(
       id: id ?? this.id,
-      name: name ?? this.name,
-      description: description ?? this.description,
-      isDone: isDone ?? this.isDone,
-      notes: notes ?? this.notes);
+      todo: todo ?? this.todo,
+      text: text ?? this.text,
+      timestamp: timestamp ?? this.timestamp);
   }
   
-  Todo.fromJson(Map<String, dynamic> json)  
+  Note.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
-      _name = json['name'],
-      _description = json['description'],
-      _isDone = json['isDone'],
-      _notes = json['notes'] is List
-        ? (json['notes'] as List)
-          .where((e) => e?['serializedData'] != null)
-          .map((e) => Note.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
-          .toList()
+      _todo = json['todo']?['serializedData'] != null
+        ? Todo.fromJson(new Map<String, dynamic>.from(json['todo']['serializedData']))
         : null,
+      _text = json['text'],
+      _timestamp = json['timestamp'],
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'description': _description, 'isDone': _isDone, 'notes': _notes?.map((Note? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'todo': _todo?.toJson(), 'text': _text, 'timestamp': _timestamp, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "id");
-  static final QueryField NAME = QueryField(fieldName: "name");
-  static final QueryField DESCRIPTION = QueryField(fieldName: "description");
-  static final QueryField ISDONE = QueryField(fieldName: "isDone");
-  static final QueryField NOTES = QueryField(
-    fieldName: "notes",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (Note).toString()));
+  static final QueryField TODO = QueryField(
+    fieldName: "todo",
+    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (Todo).toString()));
+  static final QueryField TEXT = QueryField(fieldName: "text");
+  static final QueryField TIMESTAMP = QueryField(fieldName: "timestamp");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
-    modelSchemaDefinition.name = "Todo";
-    modelSchemaDefinition.pluralName = "Todos";
+    modelSchemaDefinition.name = "Note";
+    modelSchemaDefinition.pluralName = "Notes";
+    
+    modelSchemaDefinition.indexes = [
+      ModelIndex(fields: const ["todoID"], name: "byTodo")
+    ];
     
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
     
+    modelSchemaDefinition.addField(ModelFieldDefinition.belongsTo(
+      key: Note.TODO,
+      isRequired: true,
+      targetName: "todoID",
+      ofModelName: (Todo).toString()
+    ));
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Todo.NAME,
+      key: Note.TEXT,
       isRequired: true,
       ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Todo.DESCRIPTION,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Todo.ISDONE,
+      key: Note.TIMESTAMP,
       isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.bool)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
-      key: Todo.NOTES,
-      isRequired: false,
-      ofModelName: (Note).toString(),
-      associatedKey: Note.TODO
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
@@ -213,11 +206,11 @@ class Todo extends Model {
   });
 }
 
-class _TodoModelType extends ModelType<Todo> {
-  const _TodoModelType();
+class _NoteModelType extends ModelType<Note> {
+  const _NoteModelType();
   
   @override
-  Todo fromJson(Map<String, dynamic> jsonData) {
-    return Todo.fromJson(jsonData);
+  Note fromJson(Map<String, dynamic> jsonData) {
+    return Note.fromJson(jsonData);
   }
 }

@@ -6,5 +6,14 @@ type Todo @model {
   id: ID!
   name: String!
   description: String,
-  isDone: Boolean!
+  isDone: Boolean!,
+  notes: [Note] @hasMany(indexName: "byTodo", fields: ["id"])
+}
+
+type Note @model {
+  id: ID!,
+  todoID: ID! @index(name: "byTodo"),
+  todo: Todo! @belongsTo(fields: ["todoID"]),
+  text: String!,
+  timestamp: String!
 }
