@@ -21,6 +21,7 @@ class ToDoListPage extends StatefulWidget {
 
 class _ToDoListPageState extends State<ToDoListPage> {
   List<Todo> _todoList = [];
+  bool _showDone = true;
 
   @override
   void initState() {
@@ -29,7 +30,15 @@ class _ToDoListPageState extends State<ToDoListPage> {
   }
 
   Future<void> _loadTodoList() async {
-    _todoList = await Amplify.DataStore.query(Todo.classType);
+    _todoList = await Amplify.DataStore.query(
+      Todo.classType,
+      where: _showDone ? null : Todo.ISDONE.eq(false),
+      sortBy: [Todo.NAME.ascending()],
+      pagination: const QueryPagination(
+        page: 0,
+        limit: 20,
+      ),
+    );
     setState(() {});
   }
 
@@ -85,26 +94,48 @@ class _ToDoListPageState extends State<ToDoListPage> {
           ),
         ],
       ),
-      body: _todoList.isEmpty
-          ? const Center(
-              child: Text('Congratulations, there is nothing left to do!'),
-            )
-          : ListView.builder(
-              itemCount: _todoList.length,
-              itemBuilder: (context, index) {
-                var todo = _todoList[index];
-                return ListTile(
-                  title: Text(todo.name),
-                  subtitle: Text(todo.description ?? ''),
-                  trailing: InkWell(
-                    onTap: () => _toggleStatus(todo),
-                    child: Icon(
-                      todo.isDone ? Icons.check_circle : Icons.circle_outlined,
-                    ),
+      body: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              const Text('show completed'),
+              Checkbox(
+                value: _showDone,
+                onChanged: (value) async {
+                  _showDone = value ?? true;
+                  await _loadTodoList();
+                },
+              ),
+            ],
+          ),
+          Expanded(
+            child: _todoList.isEmpty
+                ? const Center(
+                    child:
+                        Text('Congratulations, there is nothing left to do!'),
+                  )
+                : ListView.builder(
+                    itemCount: _todoList.length,
+                    itemBuilder: (context, index) {
+                      var todo = _todoList[index];
+                      return ListTile(
+                        leading: InkWell(
+                          onTap: () => _toggleStatus(todo),
+                          child: Icon(
+                            todo.isDone
+                                ? Icons.check_circle
+                                : Icons.circle_outlined,
+                          ),
+                        ),
+                        title: Text(todo.name),
+                        subtitle: Text(todo.description ?? ''),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _createToDo,
         child: const Icon(Icons.add),
