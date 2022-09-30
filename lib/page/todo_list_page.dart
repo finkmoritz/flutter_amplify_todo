@@ -126,10 +126,17 @@ class _ToDoListPageState extends State<ToDoListPage> {
                             todo.isDone
                                 ? Icons.check_circle
                                 : Icons.circle_outlined,
+                            color: Theme.of(context).primaryColor,
                           ),
                         ),
                         title: Text(todo.name),
                         subtitle: Text(todo.description ?? ''),
+                        trailing: InkWell(
+                          onTap: () => _deleteTodo(todo),
+                          child: const Icon(
+                            Icons.delete_outlined,
+                          ),
+                        ),
                       );
                     },
                   ),
@@ -198,6 +205,17 @@ class _ToDoListPageState extends State<ToDoListPage> {
       await Amplify.DataStore.save(todo.copyWith(
         isDone: !todo.isDone,
       ));
+      _loadTodoList();
+    } on DataStoreException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.message),
+      ));
+    }
+  }
+
+  _deleteTodo(Todo todo) async {
+    try {
+      await Amplify.DataStore.delete(todo);
       _loadTodoList();
     } on DataStoreException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
