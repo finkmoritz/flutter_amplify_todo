@@ -96,6 +96,12 @@ class _ToDoListPageState extends State<ToDoListPage> {
                 return ListTile(
                   title: Text(todo.name),
                   subtitle: Text(todo.description ?? ''),
+                  trailing: InkWell(
+                    onTap: () => _toggleStatus(todo),
+                    child: Icon(
+                      todo.isDone ? Icons.check_circle : Icons.circle_outlined,
+                    ),
+                  ),
                 );
               },
             ),
@@ -146,10 +152,26 @@ class _ToDoListPageState extends State<ToDoListPage> {
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ToDoPage(
-          todo: Todo(name: ''),
+          todo: Todo(
+            name: '',
+            isDone: false,
+          ),
         ),
       ),
     );
     _loadTodoList();
+  }
+
+  _toggleStatus(Todo todo) async {
+    try {
+      await Amplify.DataStore.save(todo.copyWith(
+        isDone: !todo.isDone,
+      ));
+      _loadTodoList();
+    } on DataStoreException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.message),
+      ));
+    }
   }
 }
