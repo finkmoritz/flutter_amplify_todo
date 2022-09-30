@@ -137,6 +137,7 @@ class _ToDoListPageState extends State<ToDoListPage> {
                             Icons.delete_outlined,
                           ),
                         ),
+                        onTap: () => _editToDo(todo),
                       );
                     },
                   ),
@@ -144,7 +145,11 @@ class _ToDoListPageState extends State<ToDoListPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _createToDo,
+        onPressed: () => _editToDo(Todo(
+          name: '',
+          isDone: false,
+          notes: const [],
+        )),
         child: const Icon(Icons.add),
       ),
     );
@@ -186,14 +191,11 @@ class _ToDoListPageState extends State<ToDoListPage> {
     }
   }
 
-  _createToDo() async {
+  _editToDo(Todo todo) async {
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ToDoPage(
-          todo: Todo(
-            name: '',
-            isDone: false,
-          ),
+          todo: todo,
         ),
       ),
     );
