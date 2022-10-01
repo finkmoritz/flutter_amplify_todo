@@ -116,15 +116,33 @@ class _ToDoListPageState extends State<ToDoListPage> {
       body: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('show completed'),
-              Checkbox(
-                value: _showDone,
-                onChanged: (value) async {
-                  _showDone = value ?? true;
-                  await _loadTodoList();
+              IconButton(
+                icon: Icon((_subscription?.isPaused ?? true)
+                    ? Icons.sync_disabled
+                    : Icons.sync),
+                onPressed: () {
+                  if (_subscription?.isPaused ?? true) {
+                    _subscription?.resume();
+                  } else {
+                    _subscription?.pause();
+                  }
+                  setState(() {});
                 },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text('show completed'),
+                  Checkbox(
+                    value: _showDone,
+                    onChanged: (value) async {
+                      _showDone = value ?? true;
+                      await _loadTodoList();
+                    },
+                  ),
+                ],
               ),
             ],
           ),
