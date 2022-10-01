@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_amplify_todo/models/ModelProvider.dart';
@@ -20,6 +22,7 @@ class ToDoListPage extends StatefulWidget {
 }
 
 class _ToDoListPageState extends State<ToDoListPage> {
+  StreamSubscription<QuerySnapshot<Todo>>? _subscription;
   List<Todo> _todoList = [];
   bool _showDone = true;
 
@@ -27,6 +30,22 @@ class _ToDoListPageState extends State<ToDoListPage> {
   void initState() {
     super.initState();
     _loadTodoList();
+
+    _subscription = Amplify.DataStore.observeQuery(
+      Todo.classType,
+      where: _showDone ? null : Todo.ISDONE.eq(false),
+      sortBy: [Todo.NAME.ascending()],
+    ).listen((QuerySnapshot<Todo> snapshot) {
+      setState(() {
+        _todoList = snapshot.items;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadTodoList() async {
