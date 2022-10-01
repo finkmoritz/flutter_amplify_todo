@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
@@ -40,12 +41,13 @@ class _MyAppState extends State<MyApp> {
     await Amplify.addPlugins([
       AmplifyAuthCognito(),
       AmplifyDataStore(modelProvider: ModelProvider.instance),
+      AmplifyAPI(),
     ]);
 
     try {
       await Amplify.configure(amplifyconfig);
       _subscribe();
-      _insertTodoLabels();
+      //_insertTodoLabels();
     } on AmplifyAlreadyConfiguredException {
       safePrint(
           "Tried to reconfigure Amplify; this can occur when your app restarts on Android.");
