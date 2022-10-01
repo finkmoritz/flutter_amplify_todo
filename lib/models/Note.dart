@@ -31,7 +31,7 @@ class Note extends Model {
   final String id;
   final Todo? _todo;
   final String? _text;
-  final String? _timestamp;
+  final TemporalDateTime? _timestamp;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -69,7 +69,7 @@ class Note extends Model {
     }
   }
   
-  String get timestamp {
+  TemporalDateTime get timestamp {
     try {
       return _timestamp!;
     } catch(e) {
@@ -92,7 +92,7 @@ class Note extends Model {
   
   const Note._internal({required this.id, required todo, required text, required timestamp, createdAt, updatedAt}): _todo = todo, _text = text, _timestamp = timestamp, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Note({String? id, required Todo todo, required String text, required String timestamp}) {
+  factory Note({String? id, required Todo todo, required String text, required TemporalDateTime timestamp}) {
     return Note._internal(
       id: id == null ? UUID.getUUID() : id,
       todo: todo,
@@ -125,7 +125,7 @@ class Note extends Model {
     buffer.write("id=" + "$id" + ", ");
     buffer.write("todo=" + (_todo != null ? _todo!.toString() : "null") + ", ");
     buffer.write("text=" + "$_text" + ", ");
-    buffer.write("timestamp=" + "$_timestamp" + ", ");
+    buffer.write("timestamp=" + (_timestamp != null ? _timestamp!.format() : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -133,7 +133,7 @@ class Note extends Model {
     return buffer.toString();
   }
   
-  Note copyWith({String? id, Todo? todo, String? text, String? timestamp}) {
+  Note copyWith({String? id, Todo? todo, String? text, TemporalDateTime? timestamp}) {
     return Note._internal(
       id: id ?? this.id,
       todo: todo ?? this.todo,
@@ -147,12 +147,12 @@ class Note extends Model {
         ? Todo.fromJson(new Map<String, dynamic>.from(json['todo']['serializedData']))
         : null,
       _text = json['text'],
-      _timestamp = json['timestamp'],
+      _timestamp = json['timestamp'] != null ? TemporalDateTime.fromString(json['timestamp']) : null,
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'todo': _todo?.toJson(), 'text': _text, 'timestamp': _timestamp, 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'todo': _todo?.toJson(), 'text': _text, 'timestamp': _timestamp?.format(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "id");
@@ -187,7 +187,7 @@ class Note extends Model {
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
       key: Note.TIMESTAMP,
       isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+      ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(

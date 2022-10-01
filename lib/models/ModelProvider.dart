@@ -33,7 +33,7 @@ export 'TodoLabel.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "a7d6ea8086db32d5b6165614f030ef05";
+  String version = "b9083084a6fcad15111a468aafd37639";
   @override
   List<ModelSchema> modelSchemas = [Label.schema, Note.schema, Todo.schema, TodoLabel.schema];
   static final ModelProvider _instance = ModelProvider();

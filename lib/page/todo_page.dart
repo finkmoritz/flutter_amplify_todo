@@ -137,7 +137,7 @@ class _ToDoPageState extends State<ToDoPage> {
                       .map((note) => Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                                '${note.timestamp.substring(11, 16)} - ${note.text}'),
+                                '${note.timestamp.format().substring(11, 16)} - ${note.text}'),
                           ))
                       .toList() +
                   [
@@ -196,7 +196,7 @@ class _ToDoPageState extends State<ToDoPage> {
           await Amplify.DataStore.save(Note(
             todo: todo,
             text: _noteController.text.trim(),
-            timestamp: DateTime.now().toIso8601String(),
+            timestamp: TemporalDateTime.now(),
           ));
         }
 

@@ -16,7 +16,7 @@ type Note @model {
   todoID: ID! @index(name: "byTodo")
   todo: Todo! @belongsTo(fields: ["todoID"])
   text: String!
-  timestamp: String!
+  timestamp: AWSDateTime!
 }
 
 type Label @model {
