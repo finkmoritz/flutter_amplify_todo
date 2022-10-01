@@ -45,6 +45,7 @@ class _MyAppState extends State<MyApp> {
     try {
       await Amplify.configure(amplifyconfig);
       _subscribe();
+      _insertTodoLabels();
     } on AmplifyAlreadyConfiguredException {
       safePrint(
           "Tried to reconfigure Amplify; this can occur when your app restarts on Android.");
@@ -68,6 +69,15 @@ class _MyAppState extends State<MyApp> {
           break;
       }
     });
+  }
+
+  Future<void> _insertTodoLabels() async {
+    var existingLabels = await Amplify.DataStore.query(Label.classType);
+    if (existingLabels.isEmpty) {
+      Amplify.DataStore.save(Label(name: 'Urgent', color: LabelColor.RED));
+      Amplify.DataStore.save(Label(name: 'Fun', color: LabelColor.GREEN));
+      Amplify.DataStore.save(Label(name: 'Mandatory', color: LabelColor.BLUE));
+    }
   }
 
   @override

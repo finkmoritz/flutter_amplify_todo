@@ -25,16 +25,14 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
 
-/** This is an auto generated class representing the Todo type in your schema. */
+/** This is an auto generated class representing the Label type in your schema. */
 @immutable
-class Todo extends Model {
-  static const classType = const _TodoModelType();
+class Label extends Model {
+  static const classType = const _LabelModelType();
   final String id;
+  final List<TodoLabel>? _todos;
   final String? _name;
-  final String? _description;
-  final bool? _isDone;
-  final List<Note>? _notes;
-  final List<TodoLabel>? _labels;
+  final LabelColor? _color;
   final TemporalDateTime? _createdAt;
   final TemporalDateTime? _updatedAt;
 
@@ -44,6 +42,10 @@ class Todo extends Model {
   @override
   String getId() {
     return id;
+  }
+  
+  List<TodoLabel>? get todos {
+    return _todos;
   }
   
   String get name {
@@ -59,13 +61,9 @@ class Todo extends Model {
     }
   }
   
-  String? get description {
-    return _description;
-  }
-  
-  bool get isDone {
+  LabelColor get color {
     try {
-      return _isDone!;
+      return _color!;
     } catch(e) {
       throw new AmplifyCodeGenModelException(
           AmplifyExceptionMessages.codeGenRequiredFieldForceCastExceptionMessage,
@@ -76,14 +74,6 @@ class Todo extends Model {
     }
   }
   
-  List<Note>? get notes {
-    return _notes;
-  }
-  
-  List<TodoLabel>? get labels {
-    return _labels;
-  }
-  
   TemporalDateTime? get createdAt {
     return _createdAt;
   }
@@ -92,16 +82,14 @@ class Todo extends Model {
     return _updatedAt;
   }
   
-  const Todo._internal({required this.id, required name, description, required isDone, notes, labels, createdAt, updatedAt}): _name = name, _description = description, _isDone = isDone, _notes = notes, _labels = labels, _createdAt = createdAt, _updatedAt = updatedAt;
+  const Label._internal({required this.id, todos, required name, required color, createdAt, updatedAt}): _todos = todos, _name = name, _color = color, _createdAt = createdAt, _updatedAt = updatedAt;
   
-  factory Todo({String? id, required String name, String? description, required bool isDone, List<Note>? notes, List<TodoLabel>? labels}) {
-    return Todo._internal(
+  factory Label({String? id, List<TodoLabel>? todos, required String name, required LabelColor color}) {
+    return Label._internal(
       id: id == null ? UUID.getUUID() : id,
+      todos: todos != null ? List<TodoLabel>.unmodifiable(todos) : todos,
       name: name,
-      description: description,
-      isDone: isDone,
-      notes: notes != null ? List<Note>.unmodifiable(notes) : notes,
-      labels: labels != null ? List<TodoLabel>.unmodifiable(labels) : labels);
+      color: color);
   }
   
   bool equals(Object other) {
@@ -111,13 +99,11 @@ class Todo extends Model {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is Todo &&
+    return other is Label &&
       id == other.id &&
+      DeepCollectionEquality().equals(_todos, other._todos) &&
       _name == other._name &&
-      _description == other._description &&
-      _isDone == other._isDone &&
-      DeepCollectionEquality().equals(_notes, other._notes) &&
-      DeepCollectionEquality().equals(_labels, other._labels);
+      _color == other._color;
   }
   
   @override
@@ -127,11 +113,10 @@ class Todo extends Model {
   String toString() {
     var buffer = new StringBuffer();
     
-    buffer.write("Todo {");
+    buffer.write("Label {");
     buffer.write("id=" + "$id" + ", ");
     buffer.write("name=" + "$_name" + ", ");
-    buffer.write("description=" + "$_description" + ", ");
-    buffer.write("isDone=" + (_isDone != null ? _isDone!.toString() : "null") + ", ");
+    buffer.write("color=" + (_color != null ? enumToString(_color)! : "null") + ", ");
     buffer.write("createdAt=" + (_createdAt != null ? _createdAt!.format() : "null") + ", ");
     buffer.write("updatedAt=" + (_updatedAt != null ? _updatedAt!.format() : "null"));
     buffer.write("}");
@@ -139,86 +124,60 @@ class Todo extends Model {
     return buffer.toString();
   }
   
-  Todo copyWith({String? id, String? name, String? description, bool? isDone, List<Note>? notes, List<TodoLabel>? labels}) {
-    return Todo._internal(
+  Label copyWith({String? id, List<TodoLabel>? todos, String? name, LabelColor? color}) {
+    return Label._internal(
       id: id ?? this.id,
+      todos: todos ?? this.todos,
       name: name ?? this.name,
-      description: description ?? this.description,
-      isDone: isDone ?? this.isDone,
-      notes: notes ?? this.notes,
-      labels: labels ?? this.labels);
+      color: color ?? this.color);
   }
   
-  Todo.fromJson(Map<String, dynamic> json)  
+  Label.fromJson(Map<String, dynamic> json)  
     : id = json['id'],
-      _name = json['name'],
-      _description = json['description'],
-      _isDone = json['isDone'],
-      _notes = json['notes'] is List
-        ? (json['notes'] as List)
-          .where((e) => e?['serializedData'] != null)
-          .map((e) => Note.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
-          .toList()
-        : null,
-      _labels = json['labels'] is List
-        ? (json['labels'] as List)
+      _todos = json['todos'] is List
+        ? (json['todos'] as List)
           .where((e) => e?['serializedData'] != null)
           .map((e) => TodoLabel.fromJson(new Map<String, dynamic>.from(e['serializedData'])))
           .toList()
         : null,
+      _name = json['name'],
+      _color = enumFromString<LabelColor>(json['color'], LabelColor.values),
       _createdAt = json['createdAt'] != null ? TemporalDateTime.fromString(json['createdAt']) : null,
       _updatedAt = json['updatedAt'] != null ? TemporalDateTime.fromString(json['updatedAt']) : null;
   
   Map<String, dynamic> toJson() => {
-    'id': id, 'name': _name, 'description': _description, 'isDone': _isDone, 'notes': _notes?.map((Note? e) => e?.toJson()).toList(), 'labels': _labels?.map((TodoLabel? e) => e?.toJson()).toList(), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
+    'id': id, 'todos': _todos?.map((TodoLabel? e) => e?.toJson()).toList(), 'name': _name, 'color': enumToString(_color), 'createdAt': _createdAt?.format(), 'updatedAt': _updatedAt?.format()
   };
 
   static final QueryField ID = QueryField(fieldName: "id");
-  static final QueryField NAME = QueryField(fieldName: "name");
-  static final QueryField DESCRIPTION = QueryField(fieldName: "description");
-  static final QueryField ISDONE = QueryField(fieldName: "isDone");
-  static final QueryField NOTES = QueryField(
-    fieldName: "notes",
-    fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (Note).toString()));
-  static final QueryField LABELS = QueryField(
-    fieldName: "labels",
+  static final QueryField TODOS = QueryField(
+    fieldName: "todos",
     fieldType: ModelFieldType(ModelFieldTypeEnum.model, ofModelName: (TodoLabel).toString()));
+  static final QueryField NAME = QueryField(fieldName: "name");
+  static final QueryField COLOR = QueryField(fieldName: "color");
   static var schema = Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
-    modelSchemaDefinition.name = "Todo";
-    modelSchemaDefinition.pluralName = "Todos";
+    modelSchemaDefinition.name = "Label";
+    modelSchemaDefinition.pluralName = "Labels";
     
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
     
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Todo.NAME,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Todo.DESCRIPTION,
-      isRequired: false,
-      ofType: ModelFieldType(ModelFieldTypeEnum.string)
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-      key: Todo.ISDONE,
-      isRequired: true,
-      ofType: ModelFieldType(ModelFieldTypeEnum.bool)
-    ));
-    
     modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
-      key: Todo.NOTES,
-      isRequired: false,
-      ofModelName: (Note).toString(),
-      associatedKey: Note.TODO
-    ));
-    
-    modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
-      key: Todo.LABELS,
+      key: Label.TODOS,
       isRequired: false,
       ofModelName: (TodoLabel).toString(),
-      associatedKey: TodoLabel.TODO
+      associatedKey: TodoLabel.LABEL
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Label.NAME,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.string)
+    ));
+    
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+      key: Label.COLOR,
+      isRequired: true,
+      ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)
     ));
     
     modelSchemaDefinition.addField(ModelFieldDefinition.nonQueryField(
@@ -237,11 +196,11 @@ class Todo extends Model {
   });
 }
 
-class _TodoModelType extends ModelType<Todo> {
-  const _TodoModelType();
+class _LabelModelType extends ModelType<Label> {
+  const _LabelModelType();
   
   @override
-  Todo fromJson(Map<String, dynamic> jsonData) {
-    return Todo.fromJson(jsonData);
+  Label fromJson(Map<String, dynamic> jsonData) {
+    return Label.fromJson(jsonData);
   }
 }

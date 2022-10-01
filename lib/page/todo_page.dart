@@ -1,8 +1,11 @@
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_amplify_todo/models/LabelColor.dart';
 import 'package:flutter_amplify_todo/models/Todo.dart';
 
+import '../models/Label.dart';
 import '../models/Note.dart';
+import '../models/TodoLabel.dart';
 
 class ToDoPage extends StatefulWidget {
   final Todo todo;
@@ -22,6 +25,8 @@ class _ToDoPageState extends State<ToDoPage> {
   late TextEditingController _descriptionController;
   late TextEditingController _noteController;
   List<Note> _notes = [];
+  List<Label> _allLabels = [];
+  List<String> _selectedLabelIDs = [];
 
   @override
   void initState() {
@@ -36,6 +41,19 @@ class _ToDoPageState extends State<ToDoPage> {
       where: Note.TODO.eq(widget.todo.id),
     ).then((notes) {
       _notes = notes;
+      setState(() {});
+    });
+
+    Amplify.DataStore.query(Label.classType).then((labels) {
+      _allLabels = labels;
+      setState(() {});
+    });
+
+    Amplify.DataStore.query(
+      TodoLabel.classType,
+      where: TodoLabel.TODO.eq(widget.todo.id),
+    ).then((todoLabels) {
+      _selectedLabelIDs.addAll(todoLabels.map((todoLabel) => todoLabel.label.id));
       setState(() {});
     });
   }
@@ -76,6 +94,34 @@ class _ToDoPageState extends State<ToDoPage> {
                       decoration: const InputDecoration(
                         labelText: 'Description',
                       ),
+                    ),
+                    const SizedBox(
+                      height: 16.0,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: _allLabels.map((label) {
+                        var color = MaterialStateProperty.all(
+                          _getColor(label.color),
+                        );
+                        return _selectedLabelIDs.contains(label.id)
+                            ? ElevatedButton(
+                                onPressed: () {
+                                  _selectedLabelIDs.remove(label.id);
+                                  setState(() {});
+                                },
+                                style: ButtonStyle(backgroundColor: color),
+                                child: Text(label.name),
+                              )
+                            : OutlinedButton(
+                                onPressed: () {
+                                  _selectedLabelIDs.add(label.id);
+                                  setState(() {});
+                                },
+                                style: ButtonStyle(foregroundColor: color),
+                                child: Text(label.name),
+                              );
+                      }).toList(),
                     ),
                     const SizedBox(
                       height: 64.0,
@@ -130,6 +176,22 @@ class _ToDoPageState extends State<ToDoPage> {
 
         await Amplify.DataStore.save(todo);
 
+        // Delete old labels
+        var todoLabels = await Amplify.DataStore.query(
+          TodoLabel.classType,
+          where: TodoLabel.TODO.eq(todo.id),
+        );
+        for (var todoLabel in todoLabels) {
+          await Amplify.DataStore.delete(todoLabel);
+        }
+
+        // Insert selected labels
+        for (var label in _allLabels) {
+          if (_selectedLabelIDs.contains(label.id)) {
+            await Amplify.DataStore.save(TodoLabel(todo: todo, label: label));
+          }
+        }
+
         if (_noteController.text.isNotEmpty) {
           await Amplify.DataStore.save(Note(
             todo: todo,
@@ -144,6 +206,17 @@ class _ToDoPageState extends State<ToDoPage> {
           content: Text(e.message),
         ));
       }
+    }
+  }
+
+  Color _getColor(LabelColor labelColor) {
+    switch (labelColor) {
+      case LabelColor.RED:
+        return Colors.red;
+      case LabelColor.GREEN:
+        return Colors.green;
+      case LabelColor.BLUE:
+        return Colors.blue;
     }
   }
 }

@@ -5,15 +5,29 @@ input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONL
 type Todo @model {
   id: ID!
   name: String!
-  description: String,
-  isDone: Boolean!,
+  description: String
+  isDone: Boolean!
   notes: [Note] @hasMany(indexName: "byTodo", fields: ["id"])
+  labels: [Label] @manyToMany(relationName: "TodoLabel")
 }
 
 type Note @model {
-  id: ID!,
-  todoID: ID! @index(name: "byTodo"),
-  todo: Todo! @belongsTo(fields: ["todoID"]),
-  text: String!,
+  id: ID!
+  todoID: ID! @index(name: "byTodo")
+  todo: Todo! @belongsTo(fields: ["todoID"])
+  text: String!
   timestamp: String!
+}
+
+type Label @model {
+  id: ID!
+  todos: [Todo] @manyToMany(relationName: "TodoLabel")
+  name: String!
+  color: LabelColor!
+}
+
+enum LabelColor {
+  RED
+  GREEN
+  BLUE
 }
