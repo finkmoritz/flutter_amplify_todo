@@ -1,5 +1,12 @@
 {
   "AppSyncApiName": "flutteramplifytodo",
   "DynamoDBBillingMode": "PAY_PER_REQUEST",
-  "DynamoDBEnableServerSideEncryption": false
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthCognitoUserPoolId": {
+    "Fn::GetAtt": [
+      "authflutteramplifytodo6410f4ce",
+      "Outputs.UserPoolId"
+    ]
+  },
+  "AuthModeLastUpdated": "2022-10-01T19:55:27.866Z"
 }

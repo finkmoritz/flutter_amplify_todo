@@ -159,6 +159,14 @@ class Label extends Model {
     modelSchemaDefinition.name = "Label";
     modelSchemaDefinition.pluralName = "Labels";
     
+    modelSchemaDefinition.authRules = [
+      AuthRule(
+        authStrategy: AuthStrategy.PRIVATE,
+        operations: [
+          ModelOperation.READ
+        ])
+    ];
+    
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
     
     modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(

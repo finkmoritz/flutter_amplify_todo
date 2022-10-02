@@ -48,7 +48,7 @@ GraphQL
 
 Here is the GraphQL API that we will create. Select a setting to edit or continue (Use arrow keys)
 Name: flutteramplifytodo 
-Authorization modes: API key (default, expiration time: 365 days from now) 
+Authorization modes: Cognito User Pool
 Conflict detection (required for DataStore): Enabled 
 Conflict resolution strategy: Auto Merge 
 

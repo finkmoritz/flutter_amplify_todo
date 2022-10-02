@@ -165,6 +165,22 @@ class Note extends Model {
     modelSchemaDefinition.name = "Note";
     modelSchemaDefinition.pluralName = "Notes";
     
+    modelSchemaDefinition.authRules = [
+      AuthRule(
+        authStrategy: AuthStrategy.OWNER,
+        ownerField: "owner",
+        identityClaim: "cognito:username",
+        provider: AuthRuleProvider.USERPOOLS,
+        operations: [
+          ModelOperation.CREATE
+        ]),
+      AuthRule(
+        authStrategy: AuthStrategy.PRIVATE,
+        operations: [
+          ModelOperation.READ
+        ])
+    ];
+    
     modelSchemaDefinition.indexes = [
       ModelIndex(fields: const ["todoID"], name: "byTodo")
     ];
