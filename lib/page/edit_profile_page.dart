@@ -13,6 +13,7 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
+  String? _profilePictureUrl;
   late TextEditingController _givenNameController;
   late TextEditingController _familyNameController;
   List<AuthUserAttribute>? _userAttributes;
@@ -52,6 +53,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
           ),
         )
         .value;
+
+    var profilePictureKey = _userAttributes!
+        .firstWhere(
+          (a) => a.userAttributeKey == CognitoUserAttributeKey.picture,
+          orElse: () => const AuthUserAttribute(
+            userAttributeKey: CognitoUserAttributeKey.picture,
+            value: '',
+          ),
+        )
+        .value;
+    if (profilePictureKey.isNotEmpty) {
+      var result = await Amplify.Storage.getUrl(key: profilePictureKey);
+      _profilePictureUrl = result.url;
+    }
+
     setState(() {});
   }
 
@@ -68,6 +84,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
               onTap: _uploadImage,
               child: CircleAvatar(
                 radius: 0.25 * MediaQuery.of(context).size.width,
+                backgroundImage: _profilePictureUrl == null
+                    ? null
+                    : NetworkImage(_profilePictureUrl!),
               ),
             ),
             TextFormField(
@@ -149,6 +168,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
           userAttributeKey: CognitoUserAttributeKey.picture,
           value: key,
         );
+        var result = await Amplify.Storage.getUrl(key: key);
+        setState(() {
+          _profilePictureUrl = result.url;
+        });
       } on AmplifyException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(e.message),
