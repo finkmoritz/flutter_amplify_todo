@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({Key? key}) : super(key: key);
@@ -61,6 +64,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            InkWell(
+              onTap: _uploadImage,
+              child: CircleAvatar(
+                radius: 0.25 * MediaQuery.of(context).size.width,
+              ),
+            ),
             TextFormField(
               controller: _givenNameController,
               decoration: const InputDecoration(
@@ -117,6 +126,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
             value: _familyNameController.text.trim(),
           ),
         ]).then((_) => Navigator.pop(context));
+      } on AmplifyException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(e.message),
+        ));
+      }
+    }
+  }
+
+  Future<void> _uploadImage() async {
+    final xfile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (xfile != null) {
+      final currentUser = await Amplify.Auth.getCurrentUser();
+      final key = currentUser.userId;
+      final file = File(xfile.path);
+      try {
+        await Amplify.Storage.uploadFile(
+          local: file,
+          key: key,
+        );
+        await Amplify.Auth.updateUserAttribute(
+          userAttributeKey: CognitoUserAttributeKey.picture,
+          value: key,
+        );
       } on AmplifyException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(e.message),
