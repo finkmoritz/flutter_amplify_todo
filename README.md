@@ -57,3 +57,24 @@ Single object with fields (e.g., “Todo” with ID, name, description)
 ````
 
 Push your changes using ```amplify push```.
+
+### Configure Amplify Storage
+
+Execute ```amplify add storage``` with following configuration:
+````
+Select from one of the below mentioned services: 
+Content (Images, audio, video, etc.)
+Provide a friendly name for your resource that will be used to label this category in the project:
+<provide any name>
+Provide bucket name:
+<provide any name>
+Who should have access:
+Auth users only
+What kind of access do you want for Authenticated users?
+create/update, read, delete
+Do you want to add a Lambda Trigger for your S3 Bucket? (y/N)
+no
+
+````
+
+Push your changes using ```amplify push```.

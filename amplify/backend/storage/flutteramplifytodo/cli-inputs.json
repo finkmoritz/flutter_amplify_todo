@@ -1,0 +1,14 @@
+{
+  "resourceName": "flutteramplifytodo",
+  "policyUUID": "1d80b9fa",
+  "bucketName": "flutteramplifytodo5eeb436e3b9445d89ea167b23f946",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
