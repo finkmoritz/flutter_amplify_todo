@@ -47,7 +47,7 @@ Select from one of the below mentioned services:
 GraphQL
 
 Here is the GraphQL API that we will create. Select a setting to edit or continue (Use arrow keys)
-Name: flutteramplifytodo 
+Name: <provide any name>
 Authorization modes: Cognito User Pool
 Conflict detection (required for DataStore): Enabled 
 Conflict resolution strategy: Auto Merge 
@@ -74,7 +74,20 @@ What kind of access do you want for Authenticated users?
 create/update, read, delete
 Do you want to add a Lambda Trigger for your S3 Bucket? (y/N)
 no
+````
 
+Push your changes using ```amplify push```.
+
+### Configure Amplify Analytics
+
+Execute ```amplify add analytics``` with following configuration:
+````
+Select an Analytics provider 
+Amazon Pinpoint
+Provide your pinpoint resource name:
+<provide any name>
+Apps need authorization to send analytics events. Do you want to allow guests and unauthenticated users to send analytics events? (we recommend you allow this when getting started)
+Yes
 ````
 
 Push your changes using ```amplify push```.

@@ -57,5 +57,11 @@
       "providerPlugin": "awscloudformation",
       "dependsOn": []
     }
+  },
+  "analytics": {
+    "flutteramplifytodo": {
+      "service": "Pinpoint",
+      "providerPlugin": "awscloudformation"
+    }
   }
 }

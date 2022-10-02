@@ -43,6 +43,7 @@ dependencies:
   amplify_api: ^0.6.8
   amplify_storage_s3: ^0.6.8
   image_picker: ^0.8.5+3
+  amplify_analytics_pinpoint: ^0.6.8
 
 dev_dependencies:
   flutter_test:

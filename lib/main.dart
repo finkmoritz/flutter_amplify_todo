@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:amplify_analytics_pinpoint/amplify_analytics_pinpoint.dart';
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_authenticator/amplify_authenticator.dart';
@@ -44,6 +45,7 @@ class _MyAppState extends State<MyApp> {
       AmplifyDataStore(modelProvider: ModelProvider.instance),
       AmplifyAPI(),
       AmplifyStorageS3(),
+      AmplifyAnalyticsPinpoint(),
     ]);
 
     try {
