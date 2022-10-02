@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -35,12 +36,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _loadUserAttributes() async {
     _userAttributes = await Amplify.Auth.fetchUserAttributes();
-    _givenNameController.text = _getUserAttribute(CognitoUserAttributeKey.givenName);
-    _familyNameController.text = _getUserAttribute(CognitoUserAttributeKey.familyName);
+    _givenNameController.text =
+        _getUserAttribute(CognitoUserAttributeKey.givenName);
+    _familyNameController.text =
+        _getUserAttribute(CognitoUserAttributeKey.familyName);
 
     var profilePictureKey = _getUserAttribute(CognitoUserAttributeKey.picture);
     if (profilePictureKey.isNotEmpty) {
-      var result = await Amplify.Storage.getUrl(key: profilePictureKey);
+      var result = await Amplify.Storage.getUrl(
+        key: profilePictureKey,
+        options: S3GetUrlOptions(accessLevel: StorageAccessLevel.private),
+      );
       _profilePictureUrl = result.url;
     }
 
@@ -154,12 +160,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
         await Amplify.Storage.uploadFile(
           local: file,
           key: key,
+          options: S3UploadFileOptions(
+            accessLevel: StorageAccessLevel.private,
+          ),
         );
         await Amplify.Auth.updateUserAttribute(
           userAttributeKey: CognitoUserAttributeKey.picture,
           value: key,
         );
-        var result = await Amplify.Storage.getUrl(key: key);
+        var result = await Amplify.Storage.getUrl(
+          key: key,
+          options: S3GetUrlOptions(accessLevel: StorageAccessLevel.private),
+        );
         setState(() {
           _profilePictureUrl = result.url;
         });
@@ -173,8 +185,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _deleteImage() async {
     try {
-      var profilePictureKey = _getUserAttribute(CognitoUserAttributeKey.picture);
-      await Amplify.Storage.remove(key: profilePictureKey);
+      var profilePictureKey =
+          _getUserAttribute(CognitoUserAttributeKey.picture);
+      await Amplify.Storage.remove(
+        key: profilePictureKey,
+        options: RemoveOptions(accessLevel: StorageAccessLevel.private),
+      );
       setState(() {
         _profilePictureUrl = null;
       });
