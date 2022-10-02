@@ -35,34 +35,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   Future<void> _loadUserAttributes() async {
     _userAttributes = await Amplify.Auth.fetchUserAttributes();
-    _givenNameController.text = _userAttributes!
-        .firstWhere(
-          (a) => a.userAttributeKey == CognitoUserAttributeKey.givenName,
-          orElse: () => const AuthUserAttribute(
-            userAttributeKey: CognitoUserAttributeKey.givenName,
-            value: '',
-          ),
-        )
-        .value;
-    _familyNameController.text = _userAttributes!
-        .firstWhere(
-          (a) => a.userAttributeKey == CognitoUserAttributeKey.familyName,
-          orElse: () => const AuthUserAttribute(
-            userAttributeKey: CognitoUserAttributeKey.familyName,
-            value: '',
-          ),
-        )
-        .value;
+    _givenNameController.text = _getUserAttribute(CognitoUserAttributeKey.givenName);
+    _familyNameController.text = _getUserAttribute(CognitoUserAttributeKey.familyName);
 
-    var profilePictureKey = _userAttributes!
-        .firstWhere(
-          (a) => a.userAttributeKey == CognitoUserAttributeKey.picture,
-          orElse: () => const AuthUserAttribute(
-            userAttributeKey: CognitoUserAttributeKey.picture,
-            value: '',
-          ),
-        )
-        .value;
+    var profilePictureKey = _getUserAttribute(CognitoUserAttributeKey.picture);
     if (profilePictureKey.isNotEmpty) {
       var result = await Amplify.Storage.getUrl(key: profilePictureKey);
       _profilePictureUrl = result.url;
@@ -80,14 +56,29 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            InkWell(
-              onTap: _uploadImage,
-              child: CircleAvatar(
-                radius: 0.25 * MediaQuery.of(context).size.width,
-                backgroundImage: _profilePictureUrl == null
-                    ? null
-                    : NetworkImage(_profilePictureUrl!),
-              ),
+            Stack(
+              children: [
+                InkWell(
+                  onTap: _uploadImage,
+                  child: CircleAvatar(
+                    radius: 0.25 * MediaQuery.of(context).size.width,
+                    backgroundImage: _profilePictureUrl == null
+                        ? null
+                        : NetworkImage(_profilePictureUrl!),
+                  ),
+                ),
+                if (_profilePictureUrl != null)
+                  Positioned(
+                    right: 0,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                      onPressed: _deleteImage,
+                    ),
+                  ),
+              ],
             ),
             TextFormField(
               controller: _givenNameController,
@@ -178,5 +169,35 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ));
       }
     }
+  }
+
+  Future<void> _deleteImage() async {
+    try {
+      var profilePictureKey = _getUserAttribute(CognitoUserAttributeKey.picture);
+      await Amplify.Storage.remove(key: profilePictureKey);
+      setState(() {
+        _profilePictureUrl = null;
+      });
+      await Amplify.Auth.updateUserAttribute(
+        userAttributeKey: CognitoUserAttributeKey.picture,
+        value: '',
+      );
+    } on AmplifyException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(e.message),
+      ));
+    }
+  }
+
+  String _getUserAttribute(CognitoUserAttributeKey key) {
+    return _userAttributes!
+        .firstWhere(
+          (a) => a.userAttributeKey == key,
+          orElse: () => AuthUserAttribute(
+            userAttributeKey: key,
+            value: '',
+          ),
+        )
+        .value;
   }
 }
